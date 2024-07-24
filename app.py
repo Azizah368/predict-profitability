@@ -1,76 +1,33 @@
 import streamlit as st
-import pandas as pd
+import os
 import pickle
+from joblib import load
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from scipy.sparse import hstack
-import os
 
 # Periksa keberadaan file model
 if not os.path.exists('gradient_boosting_model.pkl'):
     st.error("File model tidak ditemukan.")
-else:
-    # Memuat model terlatih
-    model = pickle.load(open('gradient_boosting_model.pkl', 'rb'))
+    st.stop()  # Hentikan eksekusi aplikasi jika file model tidak ditemukan
 
-    # Memuat TF-IDF dan Label Encoder
-    tfidf = pickle.load(open('tfidf_vectorizer.pkl', 'rb'))
-    label_encoder_restaurant = pickle.load(open('label_encoder_restaurant.pkl', 'rb'))
-    label_encoder_menu_category = pickle.load(open('label_encoder_menu_category.pkl', 'rb'))
-    label_encoder_menu_item = pickle.load(open('label_encoder_menu_item.pkl', 'rb'))
-    label_encoder_profitability = pickle.load(open('label_encoder_profitability.pkl', 'rb'))
+# Coba memuat model terlatih
+try:
+    model = load('gradient_boosting_model.pkl')
+except Exception as e:
+    st.error(f"Terjadi kesalahan saat memuat model: {e}")
+    st.stop()  # Hentikan eksekusi aplikasi jika terjadi kesalahan
 
-    st.title('Prediksi Profitabilitas Menu Restoran')
+# Muat TF-IDF dan Label Encoder
+try:
+    tfidf = load('tfidf_vectorizer.pkl')
+    label_encoder_restaurant = load('label_encoder_restaurant.pkl')
+    label_encoder_menu_category = load('label_encoder_menu_category.pkl')
+    label_encoder_menu_item = load('label_encoder_menu_item.pkl')
+    label_encoder_profitability = load('label_encoder_profitability.pkl')
+except Exception as e:
+    st.error(f"Terjadi kesalahan saat memuat encoder atau vectorizer: {e}")
+    st.stop()  # Hentikan eksekusi aplikasi jika terjadi kesalahan
 
-    # Opsi untuk memilih Restaurant ID
-    restaurant_ids = [0, 1, 2]
-    restaurant_id = st.selectbox('Select Restaurant ID', options=restaurant_ids)
-
-    # Opsi untuk memilih Menu Category
-    menu_categories = [0, 1, 2, 3]
-    menu_category = st.selectbox('Select Menu Category', options=menu_categories)
-
-    # Opsi untuk memilih Menu Item
-    menu_items = list(range(16))  # 0 hingga 15
-    menu_item = st.selectbox('Select Menu Item', options=menu_items)
-
-    # Opsi untuk memilih Ingredients
-    ingredients_options = [
-        'confidential', 'Tomatoes', 'Basil', 'Garlic', 'Olive Oil', 'Chocolate',
-        'Butter', 'Sugar', 'Eggs', 'Chicken', 'Fettuccine', 'Alfredo Sauce', 'Parmesan'
-    ]
-    ingredients_selected = st.multiselect('Select Ingredients', options=ingredients_options)
-
-    # Input untuk Price
-    price = st.number_input('Price', min_value=0.0, step=0.01)
-
-    if st.button('Predict'):
-        # Menyiapkan fitur untuk prediksi
-        restaurant_id_encoded = label_encoder_restaurant.transform([restaurant_id])[0]
-        menu_category_encoded = label_encoder_menu_category.transform([menu_category])[0]
-        menu_item_encoded = label_encoder_menu_item.transform([menu_item])[0]
-        
-        # Menyiapkan TF-IDF untuk Ingredients
-        ingredients_combined = ', '.join(ingredients_selected)
-        ingredients_tfidf = tfidf.transform([ingredients_combined])
-        
-        # Menyiapkan fitur untuk model
-        features = hstack([
-            pd.DataFrame([[restaurant_id_encoded, menu_category_encoded, menu_item_encoded, price]],
-                         columns=['RestaurantID', 'MenuCategory', 'MenuItem', 'Price']).values,
-            ingredients_tfidf
-        ])
-        
-        # Melakukan prediksi
-        prediction = model.predict(features)
-        prediction_proba = model.predict_proba(features)
-        
-        # Mengambil label dari probabilitas
-        predicted_class = prediction[0]
-        proba = prediction_proba[0]
-        
-        # Menyusun label berdasarkan encoding
-        labels = label_encoder_profitability.classes_
-        
-        # Menampilkan hasil
-        st.write(f'The predicted profitability is: {labels[predicted_class]}')
+# Lanjutkan dengan bagian kode lainnya...
