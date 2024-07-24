@@ -1,5 +1,4 @@
-flask
-scikit-learn
+streamlit
 pandas
-numpy
-joblib
+scikit-learn
+pickle-mixin
