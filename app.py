@@ -41,10 +41,9 @@ price = st.number_input('Price', min_value=0.0, step=0.01)
 
 if st.button('Predict'):
     # Menyiapkan fitur untuk prediksi
-    # LabelEncoder biasanya digunakan untuk string; integer biasanya tidak memerlukannya
-    restaurant_id_encoded = restaurant_id  # sudah dalam bentuk integer
-    menu_category_encoded = menu_category  # sudah dalam bentuk integer
-    menu_item_encoded = menu_item  # sudah dalam bentuk integer
+    restaurant_id_encoded = label_encoder_restaurant.transform([restaurant_id])[0]
+    menu_category_encoded = label_encoder_menu_category.transform([menu_category])[0]
+    menu_item_encoded = label_encoder_menu_item.transform([menu_item])[0]
     
     # Menyiapkan TF-IDF untuk Ingredients
     ingredients_combined = ', '.join(ingredients_selected)
@@ -70,4 +69,4 @@ if st.button('Predict'):
     
     # Menampilkan hasil
     st.write(f'The predicted profitability is: {labels[predicted_class]}')
-    st.write(f'Probabilities: {dict(zip(labels, proba))}')
+    st.write(f'Probability scores: {dict(zip(labels, proba))}')
