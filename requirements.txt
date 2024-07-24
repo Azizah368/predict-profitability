@@ -1,6 +1,7 @@
 streamlit
-pandas
+pandas == 2.1.4
 scikit-learn
 matplotlib
 seaborn
 scipy
+pip == 23.3.1
