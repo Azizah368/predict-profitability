@@ -105,11 +105,9 @@ else:
         
         # Mengambil label dari probabilitas
         predicted_class = prediction[0]
-        proba = prediction_proba[0]
         
         # Menyusun label berdasarkan encoding
         labels = label_encoder_profitability.classes_
         
         # Menampilkan hasil
         st.write(f'The predicted profitability is: {labels[predicted_class]}')
-        st.write(f'Probabilities for each class: {dict(zip(labels, proba))}')
