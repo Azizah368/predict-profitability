@@ -24,7 +24,11 @@ else:
 
     # Opsi untuk memilih Restaurant ID
     st.markdown('### Pilih ID Restoran')
-    st.markdown('ID restoran yang ingin dianalisis. Misalnya, 0 untuk Restoran A, 1 untuk Restoran B, dll.')
+    st.markdown('''
+    - **0** = R001
+    - **1** = R002
+    - **2** = R003
+    ''')
     restaurant_ids = [0, 1, 2]
     restaurant_id = st.selectbox('Select Restaurant ID', options=restaurant_ids)
 
