@@ -10,15 +10,19 @@ import os
 if not os.path.exists('gradient_boosting_model.pkl'):
     st.error("File model tidak ditemukan.")
 else:
-    # Memuat model terlatih
-    model = pickle.load(open('gradient_boosting_model.pkl', 'rb'))
-
-    # Memuat TF-IDF dan Label Encoder
-    tfidf = pickle.load(open('tfidf_vectorizer.pkl', 'rb'))
-    label_encoder_restaurant = pickle.load(open('label_encoder_restaurant.pkl', 'rb'))
-    label_encoder_menu_category = pickle.load(open('label_encoder_menu_category.pkl', 'rb'))
-    label_encoder_menu_item = pickle.load(open('label_encoder_menu_item.pkl', 'rb'))
-    label_encoder_profitability = pickle.load(open('label_encoder_profitability.pkl', 'rb'))
+    try:
+        # Memuat model terlatih
+        model = pickle.load(open('gradient_boosting_model.pkl', 'rb'))
+        
+        # Memuat TF-IDF dan Label Encoder
+        tfidf = pickle.load(open('tfidf_vectorizer.pkl', 'rb'))
+        label_encoder_restaurant = pickle.load(open('label_encoder_restaurant.pkl', 'rb'))
+        label_encoder_menu_category = pickle.load(open('label_encoder_menu_category.pkl', 'rb'))
+        label_encoder_menu_item = pickle.load(open('label_encoder_menu_item.pkl', 'rb'))
+        label_encoder_profitability = pickle.load(open('label_encoder_profitability.pkl', 'rb'))
+    except Exception as e:
+        st.error(f'Error loading model or pickles: {e}')
+        st.stop()
 
     st.title('Prediksi Profitabilitas Menu Restoran')
 
@@ -77,4 +81,4 @@ else:
             st.write(f'The predicted profitability is: {labels[predicted_class]}')
             st.write(f'Probabilities: {dict(zip(labels, proba))}')
         except Exception as e:
-            st.error(f'Error: {e}')
+            st.error(f'Error during prediction: {e}')
