@@ -36,7 +36,7 @@ else:
 
     # Opsi untuk memilih Ingredients
     ingredients_options = [
-        'confidential', 'Tomatoes', 'Basil', 'Garlic', 'Olive Oil', 'Chocolate',
+        'Tomatoes', 'Basil', 'Garlic', 'Olive Oil', 'Chocolate',
         'Butter', 'Sugar', 'Eggs', 'Chicken', 'Fettuccine', 'Alfredo Sauce', 'Parmesan'
     ]
     ingredients_selected = st.multiselect('Select Ingredients', options=ingredients_options)
@@ -45,32 +45,36 @@ else:
     price = st.number_input('Price', min_value=0.0, step=0.01)
 
     if st.button('Predict'):
-        # Menyiapkan fitur untuk prediksi
-        restaurant_id_encoded = label_encoder_restaurant.transform([restaurant_id])[0]
-        menu_category_encoded = label_encoder_menu_category.transform([menu_category])[0]
-        menu_item_encoded = label_encoder_menu_item.transform([menu_item])[0]
-        
-        # Menyiapkan TF-IDF untuk Ingredients
-        ingredients_combined = ', '.join(ingredients_selected)
-        ingredients_tfidf = tfidf.transform([ingredients_combined])
-        
-        # Menyiapkan fitur untuk model
-        features = hstack([
-            pd.DataFrame([[restaurant_id_encoded, menu_category_encoded, menu_item_encoded, price]],
-                         columns=['RestaurantID', 'MenuCategory', 'MenuItem', 'Price']).values,
-            ingredients_tfidf
-        ])
-        
-        # Melakukan prediksi
-        prediction = model.predict(features)
-        prediction_proba = model.predict_proba(features)
-        
-        # Mengambil label dari probabilitas
-        predicted_class = prediction[0]
-        proba = prediction_proba[0]
-        
-        # Menyusun label berdasarkan encoding
-        labels = label_encoder_profitability.classes_
-        
-        # Menampilkan hasil
-        st.write(f'The predicted profitability is: {labels[predicted_class]}')
+        try:
+            # Menyiapkan fitur untuk prediksi
+            restaurant_id_encoded = label_encoder_restaurant.transform([restaurant_id])[0]
+            menu_category_encoded = label_encoder_menu_category.transform([menu_category])[0]
+            menu_item_encoded = label_encoder_menu_item.transform([menu_item])[0]
+
+            # Menyiapkan TF-IDF untuk Ingredients
+            ingredients_combined = ', '.join(ingredients_selected)
+            ingredients_tfidf = tfidf.transform([ingredients_combined])
+
+            # Menyiapkan fitur untuk model
+            features = hstack([
+                pd.DataFrame([[restaurant_id_encoded, menu_category_encoded, menu_item_encoded, price]],
+                             columns=['RestaurantID', 'MenuCategory', 'MenuItem', 'Price']).values,
+                ingredients_tfidf
+            ])
+
+            # Melakukan prediksi
+            prediction = model.predict(features)
+            prediction_proba = model.predict_proba(features)
+
+            # Mengambil label dari probabilitas
+            predicted_class = prediction[0]
+            proba = prediction_proba[0]
+
+            # Menyusun label berdasarkan encoding
+            labels = label_encoder_profitability.classes_
+
+            # Menampilkan hasil
+            st.write(f'The predicted profitability is: {labels[predicted_class]}')
+            st.write(f'Probabilities: {dict(zip(labels, proba))}')
+        except Exception as e:
+            st.error(f'Error: {e}')
