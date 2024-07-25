@@ -23,18 +23,50 @@ else:
     st.title('Prediksi Profitabilitas Menu Restoran')
 
     # Opsi untuk memilih Restaurant ID
+    st.markdown('### Pilih ID Restoran')
+    st.markdown('ID restoran yang ingin dianalisis. Misalnya, 0 untuk Restoran A, 1 untuk Restoran B, dll.')
     restaurant_ids = [0, 1, 2]
     restaurant_id = st.selectbox('Select Restaurant ID', options=restaurant_ids)
 
     # Opsi untuk memilih Menu Category
+    st.markdown('### Pilih Kategori Menu')
+    st.markdown('Kategori menu yang mencakup berbagai jenis makanan:')
+    st.markdown('''
+    - **0** = Appetizers
+    - **1** = Beverage
+    - **2** = Desserts
+    - **3** = Main Course
+    ''')
     menu_categories = [0, 1, 2, 3]
     menu_category = st.selectbox('Select Menu Category', options=menu_categories)
 
     # Opsi untuk memilih Menu Item
+    st.markdown('### Pilih Item Menu')
+    st.markdown('Item spesifik dari menu:')
+    st.markdown('''
+    - **0** = Bruschetta
+    - **1** = Caprese Salad
+    - **2** = Chicken Alfredo
+    - **3** = Chocolate Lava Cake
+    - **4** = Coffee
+    - **5** = Fruit Tart
+    - **6** = Grilled Steak
+    - **7** = Iced Tea
+    - **8** = Lemonade
+    - **9** = New York Cheesecake
+    - **10** = Shrimp Scampi
+    - **11** = Soda
+    - **12** = Spinach Artichoke Dip
+    - **13** = Stuffed Mushrooms
+    - **14** = Tiramisu
+    - **15** = Vegetable Stir-Fry
+    ''')
     menu_items = list(range(16))  # 0 hingga 15
     menu_item = st.selectbox('Select Menu Item', options=menu_items)
 
     # Opsi untuk memilih Ingredients
+    st.markdown('### Pilih Bahan')
+    st.markdown('Bahan-bahan yang digunakan dalam menu. Pilih dari daftar bahan yang tersedia.')
     ingredients_options = [
         'confidential', 'Tomatoes', 'Basil', 'Garlic', 'Olive Oil', 'Chocolate',
         'Butter', 'Sugar', 'Eggs', 'Chicken', 'Fettuccine', 'Alfredo Sauce', 'Parmesan'
@@ -42,6 +74,8 @@ else:
     ingredients_selected = st.multiselect('Select Ingredients', options=ingredients_options)
 
     # Input untuk Price
+    st.markdown('### Masukkan Harga')
+    st.markdown('Harga item menu')
     price = st.number_input('Price', min_value=0.0, step=0.01)
 
     if st.button('Predict'):
@@ -74,3 +108,4 @@ else:
         
         # Menampilkan hasil
         st.write(f'The predicted profitability is: {labels[predicted_class]}')
+        st.write(f'Probabilities for each class: {dict(zip(labels, proba))}')
